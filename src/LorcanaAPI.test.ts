@@ -69,4 +69,30 @@ describe('LorcanaAPI', () => {
     // This will only work if we've narrowed the type to be only a CharacterCardData
     expect(aladdin.Willpower).toBe(1);
   });
+
+  test('Card images resolve correctly', async () => {
+    const cards = await api.getCardsList();
+    const errors: string[] = [];
+    await Promise.all(cards.map(async (card) => {
+      try {
+        const response = await fetch(card.Image);
+        if(!response.ok) {
+          errors.push(`BAD CARD IMAGE: ${card.Name} - '${card.Image}'`);
+          return;
+        }
+        const contentType = response.headers.get('Content-Type');
+        if(!contentType) {
+          errors.push(`MISSING CONTENT TYPE, PROBABLY BAD: ${card.Name} - '${card.Image}'`);
+          return;
+        }
+        if(!contentType.startsWith('image/')) {
+          errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${card.Name} - '${card.Image}'`);
+          return;
+        }
+      } catch {
+        errors.push(`ERROR WHILE FETCHING, PROBABLY BAD: ${card.Name} - '${card.Image}'`);
+      }
+    }));
+    failIfReason(errors.join('\n'));
+  },10*60_000);
 });
