@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.base.json",
+  "exclude": [
+    "dist/**" // Don't know why you'd look in here, but don't
+  ]
+}
