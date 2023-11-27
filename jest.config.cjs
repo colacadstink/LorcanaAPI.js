@@ -15,4 +15,6 @@ module.exports = {
       },
     ],
   },
+  detectOpenHandles: true,
+  openHandlesTimeout: 2_000,
 };

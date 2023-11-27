@@ -41,3 +41,7 @@ export type CharacterCardData = BaseCardData & {
 };
 
 export type CardData = SongCardData | ActionCardData | ItemCardData | CharacterCardData;
+
+export function cardToString(card: CardData): string {
+  return `${card.Name} (${card.Set_ID}-${card.Card_Num})`;
+}
