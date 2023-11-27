@@ -1,4 +1,4 @@
-import {CardData} from "./types/CardData.js";
+import {CardData} from "./types/index.js";
 
 const DEFAULT_API_ROOT_URL = 'https://api.lorcana-api.com';
 
@@ -18,7 +18,11 @@ export class LorcanaAPI {
     if(force || !this.#cardsList) {
       const resp = await fetch(`${this.#apiRootUrl}/cards/all`);
       this.#assertResponseGood(resp);
-      this.#cardsList = await resp.json() as CardData[];
+      const jsonObj = await resp.json();
+      if(!Array.isArray(jsonObj)) {
+        throw new Error(`getCardsList didn't return an array - what? I got this instead: ${JSON.stringify(jsonObj)}`);
+      }
+      this.#cardsList = jsonObj.map((card) => this.#massageCardData(card));
     }
     return this.#cardsList;
   }
@@ -34,5 +38,24 @@ export class LorcanaAPI {
     if(!resp.ok) {
       throw new Error('Error fetching cards list: ' + resp.statusText);
     }
+  }
+
+  #massageCardData(jsonObj: unknown): CardData {
+    if(!jsonObj || typeof jsonObj !== 'object') {
+      throw new Error(`Server response isn't a card: ${jsonObj}`);
+    }
+
+    const cardData = {
+      ...jsonObj,
+    } as CardData;
+
+    if('Classifications' in jsonObj && typeof jsonObj.Classifications === 'string' && 'Classifications' in cardData) {
+      cardData.Classifications = jsonObj.Classifications
+        .split(',')
+        .map((c) => c.trim())
+        .filter((c) => !!c);
+    }
+
+    return cardData;
   }
 }

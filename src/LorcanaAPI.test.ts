@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import {CardType, CardTypes, Colors, LorcanaAPI, Rarities} from "./index.js";
+import {CardType, CardTypes, Classifications, Colors, LorcanaAPI, Rarities} from "./index.js";
 
 function failIfReason(reason: string) {
   if(reason) {
@@ -51,6 +51,21 @@ describe('LorcanaAPI', () => {
     for(const card of cards) {
       if(!CardTypes.includes(card.Type)) {
         errors.push(`Unknown card type '${card.Type}' found on card ${card.Name} (${card.Set_ID}-${card.Card_Num})`);
+      }
+    }
+    failIfReason(errors.join('\n'));
+  });
+
+  test.concurrent('Card classifications match', async () => {
+    const cards = await api.getCardsList();
+    const errors: string[] = [];
+    for(const card of cards) {
+      if('Classifications' in card) {
+        for(const classification of card.Classifications) {
+          if(!(Classifications as string[]).includes(classification)) {
+            errors.push(`Unknown card classification '${classification}' found on card ${card.Name} (${card.Set_ID}-${card.Card_Num})`);
+          }
+        }
       }
     }
     failIfReason(errors.join('\n'));

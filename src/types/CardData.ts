@@ -33,7 +33,7 @@ export type ItemCardData = BaseCardData & {
 
 export type CharacterCardData = BaseCardData & {
   Type: CardType.Character,
-  Classifications: string,
+  Classifications: string[],
   Abilities?: string,
   Lore: number,
   Strength: number,
