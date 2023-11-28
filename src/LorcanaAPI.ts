@@ -1,6 +1,6 @@
 import {AbilityParsers, CardData, cardToString} from "./types/index.js";
 
-const DEFAULT_API_ROOT_URL = 'https://api.lorcana-api.com';
+export const DEFAULT_LORCANA_API_ROOT_URL = 'https://api.lorcana-api.com';
 
 export type LorcanaAPIConfig = {
   apiRootUrl?: string,
@@ -11,7 +11,7 @@ export class LorcanaAPI {
   readonly #apiRootUrl: string;
 
   constructor(config?: LorcanaAPIConfig) {
-    this.#apiRootUrl = config?.apiRootUrl ?? DEFAULT_API_ROOT_URL;
+    this.#apiRootUrl = config?.apiRootUrl ?? DEFAULT_LORCANA_API_ROOT_URL;
   }
 
   async getCardsList(force = false): Promise<CardData[]> {

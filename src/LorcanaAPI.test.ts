@@ -1,5 +1,14 @@
 import {describe, expect, test} from '@jest/globals';
-import {cardToString, CardType, CardTypes, Classifications, Colors, LorcanaAPI, Rarities} from "./index.js";
+import {
+  cardToString,
+  CardType,
+  CardTypes,
+  Classifications,
+  Colors,
+  DEFAULT_LORCANA_API_ROOT_URL,
+  LorcanaAPI,
+  Rarities,
+} from "./index.js";
 import {fail, failIfReason} from "./util.test.js";
 
 describe('LorcanaAPI', () => {
@@ -101,4 +110,10 @@ describe('LorcanaAPI', () => {
     }));
     failIfReason(errors.join('\n'));
   },10*60_000);
+
+  test('CORS headers are set correctly', async () => {
+    const resp = await fetch(`${DEFAULT_LORCANA_API_ROOT_URL}/cards/fetch?strict=Smash`, {method: 'HEAD'});
+    const accessControl = resp.headers.get('Access-Control-Allow-Origin');
+    expect(accessControl).toBe('*');
+  });
 });
