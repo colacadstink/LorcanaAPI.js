@@ -1,3 +1,5 @@
+export * from './abilities/index.js';
+
 export * from './CardData.js';
 export * from './CardType.js';
 export * from './Classification.js';

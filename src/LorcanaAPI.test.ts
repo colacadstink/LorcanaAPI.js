@@ -4,19 +4,15 @@ import {fail, failIfReason} from "./util.test.js";
 
 describe('LorcanaAPI', () => {
   const api = new LorcanaAPI();
+  const cardsPromise = api.getCardsList();
 
-  beforeAll(async () => {
-    // Get the cards list once up front, so we can use the cached value throughout
-    await api.getCardsList();
+  test('Fetching the cards list works', async () => {
+    await expect(cardsPromise).resolves.toBeDefined();
   });
 
-  test.concurrent('Fetching the cards list works', async () => {
-    await expect(api.getCardsList()).resolves.toBeDefined();
-  });
-
-  test.concurrent('Card colors match', async () => {
-    const cards = await api.getCardsList();
+  test('Card colors match', async () => {
     const errors: string[] = [];
+    const cards = await cardsPromise;
     for(const card of cards) {
       if(!Colors.includes(card.Color)) {
         errors.push(`Unknown color '${card.Color}' found on card ${cardToString(card)}`);
@@ -25,9 +21,9 @@ describe('LorcanaAPI', () => {
     failIfReason(errors.join('\n'));
   });
 
-  test.concurrent('Card rarities match', async () => {
-    const cards = await api.getCardsList();
+  test('Card rarities match', async () => {
     const errors: string[] = [];
+    const cards = await cardsPromise;
     for(const card of cards) {
       if(!Rarities.includes(card.Rarity)) {
         errors.push(`Unknown rarity '${card.Rarity}' found on card ${cardToString(card)}`);
@@ -36,9 +32,9 @@ describe('LorcanaAPI', () => {
     failIfReason(errors.join('\n'));
   });
 
-  test.concurrent('Card types match', async () => {
-    const cards = await api.getCardsList();
+  test('Card types match', async () => {
     const errors: string[] = [];
+    const cards = await cardsPromise;
     for(const card of cards) {
       if(!CardTypes.includes(card.Type)) {
         errors.push(`Unknown card type '${card.Type}' found on card ${cardToString(card)}`);
@@ -47,9 +43,9 @@ describe('LorcanaAPI', () => {
     failIfReason(errors.join('\n'));
   });
 
-  test.concurrent('Card classifications match', async () => {
-    const cards = await api.getCardsList();
+  test('Card classifications match', async () => {
     const errors: string[] = [];
+    const cards = await cardsPromise;
     for(const card of cards) {
       if('Classifications' in card) {
         for(const classification of card.Classifications) {
@@ -65,8 +61,9 @@ describe('LorcanaAPI', () => {
     failIfReason(errors.join('\n'));
   });
 
-  test.concurrent('[TS] Type narrowing works as expected', async () => {
-    const aladdin = await api.getCardByName('Aladdin - Cornered Swordsman');
+  test('[TS] Type narrowing works as expected', async () => {
+    const cards = await cardsPromise;
+    const aladdin = cards.find((c) => c.Name === 'Aladdin - Cornered Swordsman');
     if(!aladdin) {
       fail('Aladdin is not defined..?');
       return;
@@ -80,8 +77,8 @@ describe('LorcanaAPI', () => {
   });
 
   test('Card images resolve correctly', async () => {
-    const cards = await api.getCardsList();
     const errors: string[] = [];
+    const cards = await cardsPromise;
     await Promise.all(cards.map(async (card) => {
       try {
         const response = await fetch(card.Image);

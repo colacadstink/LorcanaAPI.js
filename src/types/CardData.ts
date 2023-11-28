@@ -1,6 +1,7 @@
 import {Color} from "./Color.js";
 import {CardType} from "./CardType.js";
 import {Rarity} from "./Rarity.js";
+import {CardAbilitiesDetails} from "./abilities/index.js";
 
 export type BaseCardData = {
   "Artist": string,
@@ -34,7 +35,7 @@ export type ItemCardData = BaseCardData & {
 export type CharacterCardData = BaseCardData & {
   Type: CardType.Character,
   Classifications: string[],
-  Abilities?: string,
+  Abilities?: CardAbilitiesDetails,
   Lore: number,
   Strength: number,
   Willpower: number,
