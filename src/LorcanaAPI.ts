@@ -1,4 +1,4 @@
-import {AbilityParsers, CardData, cardToString} from "./types/index.js";
+import {AbilityParsers, CardData, getCardNameAndID} from "./types/index.js";
 
 export const DEFAULT_LORCANA_API_ROOT_URL = 'https://api.lorcana-api.com';
 
@@ -15,6 +15,7 @@ export class LorcanaAPI {
   }
 
   async getCardsList(force = false): Promise<CardData[]> {
+    // TODO set up paging on this properly
     if(force || !this.#cardsList) {
       const resp = await fetch(`${this.#apiRootUrl}/cards/all`);
       this.#assertResponseGood(resp);
@@ -50,6 +51,7 @@ export class LorcanaAPI {
       ...jsonObj,
     } as CardData;
 
+    // Chop the classifications up into an array
     if('Classifications' in jsonObj && typeof jsonObj.Classifications === 'string' && 'Classifications' in cardData) {
       cardData.Classifications = jsonObj.Classifications
         .split(',')
@@ -57,6 +59,7 @@ export class LorcanaAPI {
         .filter((c) => !!c);
     }
 
+    // Chop up the abilities, and parse them into objects
     if('Abilities' in jsonObj && typeof jsonObj.Abilities === 'string' && 'Abilities' in cardData) {
       // Start with a blank ability object
       cardData.Abilities = {};
@@ -81,7 +84,7 @@ export class LorcanaAPI {
 
         // Either we found a parser that accepted it, or it failed all parsers. Check which & complain if necessary:
         if(!abilityParsed) {
-          console.error(`LorcanaAPI.js error: Unable to parse ability ${ability} on card ${cardToString(cardData)}`);
+          console.error(`LorcanaAPI.js error: Unable to parse ability ${ability} on card ${getCardNameAndID(cardData)}`);
         }
       }
     }

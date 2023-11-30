@@ -62,4 +62,8 @@ export type FullCardAbilitiesDetails = {
  *  missing or false, it's not on the card in question.
  */
 export type CardAbilitiesDetails = Partial<FullCardAbilitiesDetails>;
-export const Abilities = Object.values(Ability);
+
+/**
+ * A list of all abilities in the game.
+ */
+export const Abilities = Object.freeze(Object.values(Ability));

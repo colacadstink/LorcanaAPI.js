@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
 import {
-  cardToString,
+  getCardNameAndID,
   CardType,
   CardTypes,
   Classifications,
@@ -24,7 +24,7 @@ describe('LorcanaAPI', () => {
     const cards = await cardsPromise;
     for(const card of cards) {
       if(!Colors.includes(card.Color)) {
-        errors.push(`Unknown color '${card.Color}' found on card ${cardToString(card)}`);
+        errors.push(`Unknown color '${card.Color}' found on card ${getCardNameAndID(card)}`);
       }
     }
     failIfReason(errors.join('\n'));
@@ -35,7 +35,7 @@ describe('LorcanaAPI', () => {
     const cards = await cardsPromise;
     for(const card of cards) {
       if(!Rarities.includes(card.Rarity)) {
-        errors.push(`Unknown rarity '${card.Rarity}' found on card ${cardToString(card)}`);
+        errors.push(`Unknown rarity '${card.Rarity}' found on card ${getCardNameAndID(card)}`);
       }
     }
     failIfReason(errors.join('\n'));
@@ -46,7 +46,7 @@ describe('LorcanaAPI', () => {
     const cards = await cardsPromise;
     for(const card of cards) {
       if(!CardTypes.includes(card.Type)) {
-        errors.push(`Unknown card type '${card.Type}' found on card ${cardToString(card)}`);
+        errors.push(`Unknown card type '${card.Type}' found on card ${getCardNameAndID(card)}`);
       }
     }
     failIfReason(errors.join('\n'));
@@ -59,11 +59,11 @@ describe('LorcanaAPI', () => {
       if('Classifications' in card) {
         for(const classification of card.Classifications) {
           if(!(Classifications as string[]).includes(classification)) {
-            errors.push(`Unknown card classification '${classification}' found on card ${cardToString(card)}`);
+            errors.push(`Unknown card classification '${classification}' found on card ${getCardNameAndID(card)}`);
           }
         }
         if(card.Classifications.length === 0) {
-          errors.push(`Classifications present, but zero length for card ${cardToString(card)}`);
+          errors.push(`Classifications present, but zero length for card ${getCardNameAndID(card)}`);
         }
       }
     }
@@ -92,20 +92,20 @@ describe('LorcanaAPI', () => {
       try {
         const response = await fetch(card.Image);
         if(!response.ok) {
-          errors.push(`BAD CARD IMAGE: ${cardToString(card)} - '${card.Image}'`);
+          errors.push(`BAD CARD IMAGE: ${getCardNameAndID(card)} - '${card.Image}'`);
           return;
         }
         const contentType = response.headers.get('Content-Type');
         if(!contentType) {
-          errors.push(`MISSING CONTENT TYPE, PROBABLY BAD: ${cardToString(card)} - '${card.Image}'`);
+          errors.push(`MISSING CONTENT TYPE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
           return;
         }
         if(!contentType.startsWith('image/')) {
-          errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${cardToString(card)} - '${card.Image}'`);
+          errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
           return;
         }
       } catch {
-        errors.push(`ERROR WHILE FETCHING, PROBABLY BAD: ${cardToString(card)} - '${card.Image}'`);
+        errors.push(`ERROR WHILE FETCHING, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
       }
     }));
     failIfReason(errors.join('\n'));
