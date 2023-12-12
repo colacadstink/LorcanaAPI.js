@@ -1,6 +1,6 @@
 export enum CardType {
   Action = 'Action',
-  Song = 'Song',
+  Song = 'Action - Song',
   Character = 'Character',
   Item = 'Item',
 }
