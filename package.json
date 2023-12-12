@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "description": "JavaScript / TypeScript client for https://lorcana-api.com/",
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist/",
     "lint": "eslint --fix .",
     "prepare": "husky install",
-    "prepublishOnly": "eslint .",
+    "prepublishOnly": "eslint . && tsc",
     "test": "jest",
     "watch:build": "tsc -w"
   },

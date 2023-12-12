@@ -1,0 +1,11 @@
+.husky
+.idea
+node_modules
+src
+
+.eslintrc.cjs
+.gitignore
+jest.config.cjs
+tsconfig.base.json
+tsconfig.json
+tsconfig.tests.json
