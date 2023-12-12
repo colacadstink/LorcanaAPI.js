@@ -36,6 +36,43 @@ export class LorcanaAPI {
     return this.#cardsList!.find((card) => card.Name === name);
   }
 
+  async getCardByIDs(setNum: number, cardNum: number): Promise<CardData | undefined> {
+    const resp = await fetch(`${this.#apiRootUrl}/cards/fetch?search=set_num=${setNum};card_num=${cardNum};`);
+    this.#assertResponseGood(resp);
+    const jsonObj = await resp.json();
+    if(!Array.isArray(jsonObj)) {
+      throw new Error(`/cards/fetch didn't return an array - what? I got this instead: ${JSON.stringify(jsonObj)}`);
+    }
+    return jsonObj.map((card) => this.#massageCardData(card))[0] ?? undefined;
+  }
+
+  async getCardsByIDs(cardIDs: {setNum: number, cardNum: number}[]): Promise<CardData[] | undefined> {
+    // Build out the search string
+    const groupedBySet: Record<number, number[]> = {};
+    for(const {setNum, cardNum} of cardIDs) {
+      if(!groupedBySet[setNum]) {
+        groupedBySet[setNum] = [];
+      }
+      groupedBySet[setNum].push(cardNum);
+    }
+    const searchString = Object.entries(groupedBySet)
+      .map(([setNum, cardNums]) => {
+        return `(set_num=${setNum};(${
+          cardNums.map((cardNum) => `card_num=${cardNum}`).join(';|')
+        };);)`;
+      })
+      .join(';|');
+
+    // Actually query the API
+    const resp = await fetch(`${this.#apiRootUrl}/cards/fetch?search=${encodeURI(searchString)}`);
+    this.#assertResponseGood(resp);
+    const jsonObj = await resp.json();
+    if(!Array.isArray(jsonObj)) {
+      throw new Error(`/cards/fetch didn't return an array - what? I got this instead: ${JSON.stringify(jsonObj)}`);
+    }
+    return jsonObj.map((card) => this.#massageCardData(card)) ?? undefined;
+  }
+
   #assertResponseGood(resp: Response): void {
     if(!resp.ok) {
       throw new Error('Error fetching cards list: ' + resp.statusText);
