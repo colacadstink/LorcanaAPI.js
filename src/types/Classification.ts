@@ -11,6 +11,7 @@ export enum Classification {
   Fairy = 'Fairy',
   Floodborn = 'Floodborn',
   Hero = 'Hero',
+  Hyena = 'Hyena',
   Inventor = 'Inventor',
   Item = 'Item',
   King = 'King',
@@ -27,6 +28,8 @@ export enum Classification {
   Storyborn = 'Storyborn',
   Tigger = 'Tigger',
   Villain = 'Villain',
+  Puppy = 'Puppy',
+  Titan = 'Titan',
 }
 
 export const Classifications = Object.values(Classification);

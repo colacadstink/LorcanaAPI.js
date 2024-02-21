@@ -7,7 +7,7 @@ import {
   Colors,
   DEFAULT_LORCANA_API_ROOT_URL,
   LorcanaAPI,
-  Rarities,
+  Rarities, Abilities,
 } from "./index.js";
 import {fail, failIfReason} from "./util.test.js";
 
@@ -133,5 +133,21 @@ describe('LorcanaAPI', () => {
       {setNum: 2, cardNum: 9},
     ]);
     expect(coupleCards).toMatchSnapshot('coupleCards');
+  });
+
+  test('If an ability word appears in the text box, it appears in the abilities list', async () => {
+    const errors: string[] = [];
+    const cards = await cardsPromise;
+    for(const card of cards) {
+      for(const ability of Abilities) {
+        if(card.Body_Text?.includes(ability) && (
+          !('Abilities' in card) ||
+          !(ability in (card.Abilities ?? {}))
+        )) {
+          errors.push(`${getCardNameAndID(card)} has the ability ${ability} in its body text, but not its Abilities list`);
+        }
+      }
+    }
+    failIfReason(errors.join('\n'));
   });
 });
