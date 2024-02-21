@@ -57,9 +57,20 @@ export type CharacterCardData = BaseCardData & {
 };
 
 /**
+ * Fields that exist on a location.
+ */
+export type LocationCardData = BaseCardData & {
+  Type: CardType.Location,
+  Abilities?: CardAbilitiesDetails,
+  Lore: number,
+  Move_Cost: number,
+  Willpower: number,
+};
+
+/**
  * This could be any one of the card types in the game - use the `Type` field to narrow it down.
  */
-export type CardData = SongCardData | ActionCardData | ItemCardData | CharacterCardData;
+export type CardData = SongCardData | ActionCardData | ItemCardData | CharacterCardData | LocationCardData;
 
 /**
  * Mainly for debugging - gives back a string with the card's name and ID.
