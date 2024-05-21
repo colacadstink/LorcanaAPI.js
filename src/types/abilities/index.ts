@@ -13,6 +13,7 @@ export enum Ability {
   Resist = 'Resist',
   Rush = 'Rush',
   Shift = 'Shift',
+  SingTogether = 'Sing Together',
   Singer = 'Singer',
   Support = 'Support',
   Ward = 'Ward',
@@ -33,6 +34,7 @@ export const AbilityParsers = {
   // Abilities with an ink cost, like "Shift 3"
   [Ability.Shift]: inkCostParser(Ability.Shift),
   [Ability.Singer]: inkCostParser(Ability.Singer),
+  [Ability.SingTogether]: inkCostParser(Ability.SingTogether),
 
   // Abilities with a modifier, like "Challenger +2"
   [Ability.Challenger]: modifierParser(Ability.Challenger),

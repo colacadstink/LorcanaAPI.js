@@ -16,6 +16,7 @@ export enum Classification {
   Item = 'Item',
   King = 'King',
   Knight = 'Knight',
+  Madrigal = 'Madrigal',
   Mentor = 'Mentor',
   Musketeer = 'Musketeer',
   Pirate = 'Pirate',

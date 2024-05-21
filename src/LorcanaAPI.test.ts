@@ -125,13 +125,13 @@ describe('LorcanaAPI', () => {
   });
 
   test('getCardsByIDs works to pull a couple cards from different sets', async () => {
-    const coupleCards = await api.getCardsByIDs([
+    const coupleCards = (await api.getCardsByIDs([
       {setNum: 1, cardNum: 1},
       {setNum: 1, cardNum: 3},
       {setNum: 2, cardNum: 5},
       {setNum: 2, cardNum: 7},
       {setNum: 2, cardNum: 9},
-    ]);
+    ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));
     expect(coupleCards).toMatchSnapshot('coupleCards');
   });
 

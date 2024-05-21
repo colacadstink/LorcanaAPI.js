@@ -20,6 +20,8 @@ export type BaseCardData = {
   "Set_ID": string,
   "Flavor_Text"?: string,
   "Body_Text"?: string,
+  "Franchise": string,
+  "Unique_ID": string,
   // Type is omitted intentionally; should be implemented by subtypes
 };
 
