@@ -12,13 +12,19 @@ import {
 import {fail, failIfReason} from "./util.test.js";
 import {Agent, fetch, setGlobalDispatcher} from 'undici';
 
+const HTTP_TIMEOUT = 3 * 60 * 1000; // 3 minutes in ms
+const IMAGE_TEST_RETRIES = 3;
+const IMAGE_TEST_TIMEOUT = HTTP_TIMEOUT * IMAGE_TEST_RETRIES;
+
 describe('LorcanaAPI', () => {
   const api = new LorcanaAPI();
   const cardsPromise = api.getCardsList();
 
   beforeAll(() => {
     setGlobalDispatcher(new Agent({
-      connectTimeout: 5 * 60 * 1000, // 5 minutes in ms
+      connectTimeout: HTTP_TIMEOUT,
+      bodyTimeout: HTTP_TIMEOUT,
+      headersTimeout: HTTP_TIMEOUT,
     }));
   });
 
@@ -82,28 +88,34 @@ describe('LorcanaAPI', () => {
       const errors: string[] = [];
       const cards = await cardsPromise;
       await Promise.all(cards.map(async (card) => {
-        try {
-          const response = await fetch(card.Image);
-          if(!response.ok) {
-            errors.push(`BAD CARD IMAGE: ${getCardNameAndID(card)} - '${card.Image}'`);
+        for(let i=0; i<IMAGE_TEST_RETRIES; i++) {
+          try {
+            const response = await fetch(card.Image);
+            if(!response.ok) {
+              errors.push(`BAD CARD IMAGE: ${getCardNameAndID(card)} - '${card.Image}'`);
+              return;
+            }
+            const contentType = response.headers.get('Content-Type');
+            if(!contentType) {
+              errors.push(`MISSING CONTENT TYPE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
+              return;
+            }
+            if(!contentType.startsWith('image/')) {
+              errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
+              return;
+            }
+            // Card's fine!
             return;
+          } catch (e) {
+            if (i === IMAGE_TEST_RETRIES - 1) {
+              console.error(e);
+              errors.push(`ERROR WHILE FETCHING, PROBABLY SLOW LOADING: ${getCardNameAndID(card)} - '${card.Image}'`);
+            }
           }
-          const contentType = response.headers.get('Content-Type');
-          if(!contentType) {
-            errors.push(`MISSING CONTENT TYPE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
-            return;
-          }
-          if(!contentType.startsWith('image/')) {
-            errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
-            return;
-          }
-        } catch (e) {
-          console.error(e);
-          errors.push(`ERROR WHILE FETCHING, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
         }
       }));
       failIfReason(errors.join('\n'));
-    },10*60_000);
+    },IMAGE_TEST_TIMEOUT);
 
     test('CORS headers are set correctly', async () => {
       const resp = await fetch(`${DEFAULT_LORCANA_API_ROOT_URL}/cards/fetch?strict=Smash`, {method: 'HEAD'});
