@@ -1,4 +1,4 @@
-import {describe, expect, test} from '@jest/globals';
+import {beforeAll, describe, expect, test} from '@jest/globals';
 import {
   getCardNameAndID,
   CardType,
@@ -10,10 +10,17 @@ import {
   Rarities, Abilities,
 } from "./index.js";
 import {fail, failIfReason} from "./util.test.js";
+import {Agent, fetch, setGlobalDispatcher} from 'undici';
 
 describe('LorcanaAPI', () => {
   const api = new LorcanaAPI();
   const cardsPromise = api.getCardsList();
+
+  beforeAll(() => {
+    setGlobalDispatcher(new Agent({
+      connectTimeout: 5 * 60 * 1000, // 5 minutes in ms
+    }));
+  });
 
   describe('API sanity checks', () => {
     test('Fetching the cards list works', async () => {
@@ -90,7 +97,8 @@ describe('LorcanaAPI', () => {
             errors.push(`CONTENT TYPE NOT IMAGE, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
             return;
           }
-        } catch {
+        } catch (e) {
+          console.error(e);
           errors.push(`ERROR WHILE FETCHING, PROBABLY BAD: ${getCardNameAndID(card)} - '${card.Image}'`);
         }
       }));
