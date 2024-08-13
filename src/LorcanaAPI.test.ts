@@ -155,7 +155,7 @@ describe('LorcanaAPI', () => {
       {setNum: 2, cardNum: 5},
       {setNum: 2, cardNum: 7},
       {setNum: 2, cardNum: 9},
-    ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));;
+    ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));
     expect(coupleCards).toMatchSnapshot('coupleCards');
     await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
   });
