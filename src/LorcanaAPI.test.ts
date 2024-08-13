@@ -124,7 +124,7 @@ describe('LorcanaAPI', () => {
       const resp = await fetch(`${DEFAULT_LORCANA_API_ROOT_URL}/cards/fetch?strict=Smash`, {method: 'HEAD'});
       const accessControl = resp.headers.get('Access-Control-Allow-Origin');
       expect(accessControl).toBe('*');
-    });
+    }, 10_000);
   });
 
   test('[TS] Type narrowing works as expected', async () => {
@@ -146,7 +146,7 @@ describe('LorcanaAPI', () => {
     const ariel = await api.getCardByIDs(1, 1);
     expect(ariel).toMatchSnapshot('arielOnHumanLegs');
     await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
-  });
+  }, 10_000);
 
   test('getCardsByIDs works to pull a couple cards from different sets', async () => {
     const coupleCards = (await api.getCardsByIDs([
@@ -158,7 +158,7 @@ describe('LorcanaAPI', () => {
     ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));
     expect(coupleCards).toMatchSnapshot('coupleCards');
     await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
-  });
+  }, 10_000);
 
   test('If an ability word appears in the text box, it appears in the abilities list', async () => {
     const errors: string[] = [];
