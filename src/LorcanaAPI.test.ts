@@ -16,6 +16,9 @@ const HTTP_TIMEOUT = 3 * 60 * 1000; // 3 minutes in ms
 const IMAGE_TEST_RETRIES = 3;
 const IMAGE_TEST_TIMEOUT = HTTP_TIMEOUT * IMAGE_TEST_RETRIES;
 
+// avoid jest open handle error - this is a bug in jest, I swear
+const JEST_OPEN_HANDLE_DELAY = 4000;
+
 describe('LorcanaAPI', () => {
   const api = new LorcanaAPI();
   const cardsPromise = api.getCardsList();
@@ -142,6 +145,7 @@ describe('LorcanaAPI', () => {
   test('getCardByIDs works for Ariel - On Human Legs', async () => {
     const ariel = await api.getCardByIDs(1, 1);
     expect(ariel).toMatchSnapshot('arielOnHumanLegs');
+    await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
   });
 
   test('getCardsByIDs works to pull a couple cards from different sets', async () => {
@@ -151,8 +155,9 @@ describe('LorcanaAPI', () => {
       {setNum: 2, cardNum: 5},
       {setNum: 2, cardNum: 7},
       {setNum: 2, cardNum: 9},
-    ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));
+    ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));;
     expect(coupleCards).toMatchSnapshot('coupleCards');
+    await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
   });
 
   test('If an ability word appears in the text box, it appears in the abilities list', async () => {

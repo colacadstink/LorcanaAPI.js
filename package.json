@@ -12,6 +12,7 @@
     "prepare": "husky install",
     "prepublishOnly": "eslint . && tsc",
     "test": "jest",
+    "test:update": "jest -u",
     "watch:build": "tsc -w"
   },
   "devDependencies": {

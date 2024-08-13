@@ -20,8 +20,11 @@ export type BaseCardData = {
   "Set_ID": string,
   "Flavor_Text"?: string,
   "Body_Text"?: string,
+  "Date_Added": string,
+  "Date_Modified": string,
+  "Gamemode": string, // "Lorcana" for most cards
   "Franchise": string,
-  "Unique_ID": string,
+  "Unique_ID": string, // SET-001
   // Type is omitted intentionally; should be implemented by subtypes
 };
 

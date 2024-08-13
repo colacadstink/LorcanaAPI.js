@@ -15,6 +15,7 @@ export enum Ability {
   Shift = 'Shift',
   SingTogether = 'Sing Together',
   Singer = 'Singer',
+  SingTogether = 'Sing Together',
   Support = 'Support',
   Ward = 'Ward',
 }
