@@ -17,6 +17,7 @@ export type BaseCardData = {
   "Name": string,
   "Rarity": Rarity,
   "Card_Num": number,
+  "Card_Variants": string,
   "Set_ID": string,
   "Flavor_Text"?: string,
   "Body_Text"?: string,

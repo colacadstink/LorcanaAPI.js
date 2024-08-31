@@ -15,9 +15,8 @@ export class LorcanaAPI {
   }
 
   async getCardsList(force = false): Promise<CardData[]> {
-    // TODO set up paging on this properly
     if(force || !this.#cardsList) {
-      const resp = await fetch(`${this.#apiRootUrl}/cards/all`);
+      const resp = await fetch(`${this.#apiRootUrl}/bulk/cards`);
       this.#assertResponseGood(resp);
       const jsonObj = await resp.json();
       if(!Array.isArray(jsonObj)) {
@@ -29,11 +28,13 @@ export class LorcanaAPI {
   }
 
   async getCardByName(name: string): Promise<CardData | undefined> {
-    // TODO use the API properly lol
-    if(!this.#cardsList) {
-      await this.getCardsList();
+    const resp = await fetch(`${this.#apiRootUrl}/cards/fetch?search=name=${encodeURIComponent(name)}`);
+    this.#assertResponseGood(resp);
+    const jsonObj = await resp.json();
+    if(!Array.isArray(jsonObj)) {
+      throw new Error(`/cards/fetch didn't return an array - what? I got this instead: ${JSON.stringify(jsonObj)}`);
     }
-    return this.#cardsList!.find((card) => card.Name === name);
+    return jsonObj.map((card) => this.#massageCardData(card))[0] ?? undefined;
   }
 
   async getCardByIDs(setNum: number, cardNum: number): Promise<CardData | undefined> {

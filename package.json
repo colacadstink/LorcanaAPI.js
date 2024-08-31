@@ -1,6 +1,6 @@
 {
   "name": "lorcana-api",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "JavaScript / TypeScript client for https://lorcana-api.com/",
   "type": "module",
   "main": "./dist/index.js",

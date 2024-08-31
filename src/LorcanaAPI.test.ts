@@ -125,6 +125,22 @@ describe('LorcanaAPI', () => {
       const accessControl = resp.headers.get('Access-Control-Allow-Origin');
       expect(accessControl).toBe('*');
     }, 10_000);
+
+    test('If an ability word appears in the text box, it appears in the abilities list', async () => {
+      const errors: string[] = [];
+      const cards = await cardsPromise;
+      for(const card of cards) {
+        for(const ability of Abilities) {
+          if(card.Body_Text?.includes(ability) && (
+            !('Abilities' in card) ||
+            !(ability in (card.Abilities ?? {}))
+          )) {
+            errors.push(`${getCardNameAndID(card)} has the ability ${ability} in its body text, but not its Abilities list`);
+          }
+        }
+      }
+      failIfReason(errors.join('\n'));
+    });
   });
 
   test('[TS] Type narrowing works as expected', async () => {
@@ -144,7 +160,9 @@ describe('LorcanaAPI', () => {
 
   test('getCardByIDs works for Ariel - On Human Legs', async () => {
     const ariel = await api.getCardByIDs(1, 1);
-    expect(ariel).toMatchSnapshot('arielOnHumanLegs');
+    expect(ariel).toMatchSnapshot({
+      "Date_Modified": expect.any(String),
+    }, 'arielOnHumanLegs');
     await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
   }, 10_000);
 
@@ -156,23 +174,12 @@ describe('LorcanaAPI', () => {
       {setNum: 2, cardNum: 7},
       {setNum: 2, cardNum: 9},
     ]))?.sort((a, b) => b.Unique_ID.localeCompare(a.Unique_ID));
-    expect(coupleCards).toMatchSnapshot('coupleCards');
+    expect(Array.isArray(coupleCards)).toBe(true);
+    coupleCards!.forEach((card) => {
+      expect(card).toMatchSnapshot({
+        "Date_Modified": expect.any(String),
+      });
+    });
     await new Promise<void>(resolve => setTimeout(() => resolve(), JEST_OPEN_HANDLE_DELAY)); // avoid jest open handle error
   }, 10_000);
-
-  test('If an ability word appears in the text box, it appears in the abilities list', async () => {
-    const errors: string[] = [];
-    const cards = await cardsPromise;
-    for(const card of cards) {
-      for(const ability of Abilities) {
-        if(card.Body_Text?.includes(ability) && (
-          !('Abilities' in card) ||
-          !(ability in (card.Abilities ?? {}))
-        )) {
-          errors.push(`${getCardNameAndID(card)} has the ability ${ability} in its body text, but not its Abilities list`);
-        }
-      }
-    }
-    failIfReason(errors.join('\n'));
-  });
 });
