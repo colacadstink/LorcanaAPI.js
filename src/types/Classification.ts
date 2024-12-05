@@ -24,6 +24,7 @@ export enum Classification {
   Princess = 'Princess',
   Queen = 'Queen',
   Racer = 'Racer',
+  Robot = 'Robot',
   SevenDwarfs = 'Seven Dwarfs',
   Song = 'Song',
   Sorcerer = 'Sorcerer',
