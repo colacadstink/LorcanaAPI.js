@@ -3,7 +3,6 @@
 node_modules
 src
 
-.eslintrc.cjs
 .gitignore
 jest.config.cjs
 tsconfig.base.json
